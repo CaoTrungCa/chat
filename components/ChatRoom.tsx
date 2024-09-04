@@ -4,18 +4,25 @@ import { formatRelative } from "date-fns";
 import { db } from "@/firebase/firebase";
 import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
 import Image from "next/image";
-import ListUsers from "./ListUsers";
 
-export default function ChatRoom({ user }: { user: any }) {
+export default function ChatRoom({ user, id, type }: { user: any, id: any, type: any }) {
     const dummySpace = useRef<HTMLDivElement | null>(null);
     const { uid, displayName, photoURL } = user;
 
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState("");
 
+    if (!uid || !id) return;
+    let chatId = "";
+
+    if(type === 'individual') {
+        chatId = [uid, id].sort().join('-');
+    } else {
+        chatId = id
+    }
+
     useEffect(() => {
-        const messagesCollection = collection(db, "messages/individual/test");
-        // const messagesCollection = collection(db, "messages/group/a");
+        const messagesCollection = collection(db, `messages/${type}/${chatId}`);
         const messagesQuery = query(messagesCollection, orderBy("createdAt"), limit(100));
 
         const unsubscribe = onSnapshot(messagesQuery, (querySnapShot) => {
@@ -38,8 +45,7 @@ export default function ChatRoom({ user }: { user: any }) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newMessage.trim()) {
-            await addDoc(collection(db, "messages/group/a"), {
-            // await addDoc(collection(db, "messages/individual/test"), {
+            await addDoc(collection(db, `messages/${type}/${chatId}`), {
                 text: newMessage,
                 createdAt: serverTimestamp(),
                 uid,
@@ -54,12 +60,9 @@ export default function ChatRoom({ user }: { user: any }) {
     };
 
     return (
-        <div className="flex h-screen">
-            <div className="pt-20 w-1/5 bg-gray-300 flex flex-col">
-                <ListUsers />
-            </div>
+        <>
             <div className="relative flex-grow flex flex-col">
-                <div className="pt-16 flex-grow flex flex-col">
+                <div className="flex-grow flex flex-col">
                     <ul className="flex-grow overflow-y-auto pb-16 pt-4">
                         {messages.map((message) => (
                             <li
@@ -123,6 +126,6 @@ export default function ChatRoom({ user }: { user: any }) {
                     </form>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

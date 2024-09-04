@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { auth, loginWithGoogle, signOut } from "@/firebase/firebase";
 import ChatRoom from "@/components/ChatRoom";
+import PageContainer from "@/components/PageContainer";
 
 export default function Home() {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -20,7 +21,7 @@ export default function Home() {
     <div className="h-screen flex flex-col">
       {user ? (
         <>
-          <nav className="fixed top-0 w-full text-center border-b border-gray-300 pb-1 bg-white z-10">
+          <nav className="w-full text-center border-b border-gray-300 pb-1 bg-white z-10">
             <h2 className="text-2xl font-semibold">Chat With Friends</h2>
             <button
               onClick={() => signOut()}
@@ -29,7 +30,9 @@ export default function Home() {
               Sign Out
             </button>
           </nav>
-          <ChatRoom user={user} />
+          <PageContainer>
+
+          </PageContainer>
         </>
       ) : (
         <section className="h-screen flex flex-col items-center justify-center">
