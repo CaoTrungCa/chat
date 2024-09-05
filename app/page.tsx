@@ -1,49 +1,66 @@
-'use client'
+"use client";
 import { useEffect, useState } from "react";
-import { auth, loginWithGoogle, signOut } from "@/firebase/firebase";
-import ChatRoom from "@/components/ChatRoom";
-import PageContainer from "@/components/PageContainer";
+import { signInWithPopup, signOut } from "firebase/auth";
+import { auth, db, provider } from "../lib/firebaseConfig";
+import { useRouter } from "next/navigation";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function Home() {
-  const [user, setUser] = useState(() => auth.currentUser);
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
-      } else {
-        setUser(null);
+        router.push("/chat");
       }
     });
-  }, []);
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogin = async () => {
+    await signInWithPopup(auth, provider);
+
+    const u = auth.currentUser;
+    if (u) {
+      const userDocRef = doc(db, "accounts", u.uid);
+
+      await setDoc(
+        userDocRef,
+        {
+          uid: u.uid,
+          displayName: u.displayName,
+          email: u.email,
+          photoURL: u.photoURL,
+        },
+        { merge: true }
+      );
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl">Welcome to My Chat App</h1>
       {user ? (
-        <>
-          <nav className="w-full text-center border-b border-gray-300 pb-1 bg-white z-10">
-            <h2 className="text-2xl font-semibold">Chat With Friends</h2>
-            <button
-              onClick={() => signOut()}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer hover:border hover:border-red-600 hover:bg-transparent hover:text-red-600"
-            >
-              Sign Out
-            </button>
-          </nav>
-          <PageContainer>
-
-          </PageContainer>
-        </>
+        <button
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
       ) : (
-        <section className="h-screen flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold mb-4">Welcome to Chat Room</h1>
-          <button
-            onClick={() => loginWithGoogle()}
-            className="p-5 cursor-pointer rounded-lg text-xl border hover:border hover:border-red-600 hover:bg-transparent hover:text-red-600"
-          >
-            Sign In With Google
-          </button>
-        </section>
+        <button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          onClick={handleLogin}
+        >
+          Login with Google
+        </button>
       )}
     </div>
   );
