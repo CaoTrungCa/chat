@@ -51,7 +51,6 @@ export default function GroupChat({ id }: { id: any }) {
   }, [id]);
 
   const handleSendMessage = async () => {
-    const user = auth.currentUser;
     if (user && id) {
       await addDoc(collection(db, `publicGroups/${id}/messages`), {
         content: newMessage,
@@ -76,7 +75,6 @@ export default function GroupChat({ id }: { id: any }) {
 
   const handleFileUpload = async () => {
     if (file && id) {
-      const user = auth.currentUser;
       if (user) {
         const storageRef = ref(storage, `files/${file.name}`);
         await uploadBytes(storageRef, file);
@@ -101,7 +99,6 @@ export default function GroupChat({ id }: { id: any }) {
 
   const handleLeaveGroup = async () => {
     if (id) {
-      const user = auth.currentUser;
       if (user) {
         const groupRef = doc(db, "publicGroups", id as string);
         await updateDoc(groupRef, {
