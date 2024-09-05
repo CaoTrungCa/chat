@@ -27,8 +27,10 @@ export default function ListAccounts({user}: {user: any}) {
     }, [db]);
 
     return (
-        <>
-            <span className="mx-2 pt-2 font-bold border-dashed border-b-2 border-white">Users</span>
+        <div>
+            <div className="mx-2 pt-2 font-bold border-dashed border-b-2 border-white">
+                <span>Users</span>
+            </div>
             <ul className="flex-grow flex flex-col">
                 {accounts.map((u) => (
                     <li key={u.uid} className="border-b-2 mx-2 py-2">
@@ -39,6 +41,6 @@ export default function ListAccounts({user}: {user: any}) {
                     </li>
                 ))}
             </ul>
-        </>
+        </div>
     )
 }

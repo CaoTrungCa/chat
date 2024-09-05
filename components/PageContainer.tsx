@@ -26,7 +26,7 @@ export default function PageContainer({ children }: PageContainerProps) {
         <div className="flex h-screen">
             <div className="w-1/5 bg-gray-300 flex flex-col">
                 <ListUsers user={user} />
-                <ListGroups />
+                <ListGroups user={user} />
             </div>
             {children}
         </div>
