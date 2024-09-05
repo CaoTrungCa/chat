@@ -103,7 +103,7 @@ export default function ListGroups({user}: {user: any}) {
                                 {g.displayName}
                             </div>
                         )}
-                        {!g.userGroup.includes(user.uid) && (
+                        {!g.userGroup.includes(user.uid) ? (
                             <button
                                 onClick={async () => {
                                     try {
@@ -119,6 +119,23 @@ export default function ListGroups({user}: {user: any}) {
                                 className="px-2 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                             >
                                 Join
+                            </button>
+                        ) : (
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const updatedUserGroup = g.userGroup.filter((uid: any) => uid !== user.uid);
+                                        await setDoc(doc(db, 'groups', g.id), {
+                                            ...g,
+                                            userGroup: updatedUserGroup
+                                        });
+                                    } catch (error) {
+                                        console.error("Error updating group: ", error);
+                                    }
+                                }}
+                                className="px-2 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                            >
+                                Leave
                             </button>
                         )}
                     </li>
