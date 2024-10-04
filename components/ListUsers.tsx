@@ -40,7 +40,7 @@ export default function ListUsers() {
       <div className="mt-4 grid grid-cols-4 gap-4">
         {users.map((user) => (
           <div key={user.uid} className="col-span-1 border p-4 rounded-lg">
-            <h2 className="text-xl font-semibold">{user.displayName}</h2>
+            <h2 className="text-xl font-semibold line-clamp-2 h-14">{user.displayName}</h2>
             <button
               className="mt-2 px-4 py-2 w-full bg-blue-500 text-white rounded"
               onClick={() => handlePrivateChat(user.uid)}

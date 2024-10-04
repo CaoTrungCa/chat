@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebaseConfig";
+import { useRouter } from "next/navigation";
 
 export default function CreateGroup() {
   const [groupName, setGroupName] = useState("");
+  const router = useRouter()
 
   const slugifyVietnamese = (text: string) => {
     if (text.includes("-")) {
@@ -38,6 +40,10 @@ export default function CreateGroup() {
     }
   };
 
+  const handleCancelGroup = () => {
+    router.back()
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold">Create a New Group</h1>
@@ -48,12 +54,20 @@ export default function CreateGroup() {
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
       />
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        onClick={handleCreateGroup}
-      >
-        Create Group
-      </button>
+      <div className="flex gap-4">
+        <button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          onClick={handleCreateGroup}
+        >
+          Save
+        </button>
+        <button
+          className="mt-4 px-4 py-2 bg-gray-500 text-white rounded"
+          onClick={handleCancelGroup}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

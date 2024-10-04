@@ -49,9 +49,19 @@ export default function ListGroups() {
     router.push("/chat");
   };
 
+  const handleCreateGroup = () => {
+    router.push("/create-group")
+  }
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold">Chat Groups</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Chat Groups</h1>
+        <button type="button" onClick={() => handleCreateGroup()}
+          className="px-4 py-2 bg-blue-500 text-white rounded self-center">
+          New
+        </button>
+      </div>
       <div className="mt-4 grid grid-cols-4 gap-4">
         {groups.map((group) => (
           <div
@@ -61,7 +71,7 @@ export default function ListGroups() {
             {group?.participants.includes(user?.uid) ? (
               <>
                 <Link href={`/chat/${group.id}`} className="flex-grow">
-                  <h2 className="text-xl font-bold break-words line-clamp-3">
+                  <h2 className="text-xl font-bold break-words line-clamp-2 h-14">
                     {group.groupName}
                   </h2>
                 </Link>
@@ -74,7 +84,7 @@ export default function ListGroups() {
               </>
             ) : (
               <>
-                <h2 className="text-xl font-bold break-words line-clamp-3">
+                <h2 className="text-xl font-bold break-words line-clamp-2 h-14">
                   {group.groupName}
                 </h2>
                  <button
